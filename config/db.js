@@ -2,7 +2,7 @@ const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
 
-const sequelize = new  Sequelize(
+const sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
     process.env.DB_PASS,
@@ -20,4 +20,4 @@ sequelize.sync({ alter: true })
   .then(() => console.log("✅ Database synced"))
   .catch((err) => console.error("❌ Database connection failed:", err));
 
-module.exports = {sequelize}
+module.exports = sequelize

@@ -1,7 +1,7 @@
 const express= require("express");
 require('dotenv').config();
 const cors = require("cors");
-
+const sequelize = require("./config/db")
 
 
 const app = express();
@@ -13,8 +13,15 @@ app.use(express.json());
 
 
 // Routes
+app.use("/api/v1/auth",require("./routes/authRoutes"))
+
+app.get("/",(req, res)=>{
+     return res.json({message:"Welcome To E-Commerce Application."})
+});
 
 
-app.listen(PORT,()=>{
-    console.log(`Server running on port ${PORT}`)
+sequelize.sync({force:false}).then(()=>{
+    app.listen(PORT,()=>{
+    console.log(`Server is running on http://localhost:${PORT}`)
+})
 })
