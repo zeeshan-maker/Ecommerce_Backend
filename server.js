@@ -12,7 +12,8 @@ app.use(express.json());
 
 
 // Routes
-app.use("/api/v1/auth",require("./routes/authRoutes"))
+app.use("/api/v1/auth",require("./routes/authRoutes"));
+app.use("/api/v1/category",require("./routes/categoryRoutes"));
 
 app.get("/",(req, res)=>{
      return res.json({message:"Welcome To E-Commerce Application."})
