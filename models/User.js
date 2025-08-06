@@ -29,12 +29,19 @@ const User = sequelize.define("User",{
         type:DataTypes.ENUM("customer","admin","seller"),
         defaultValue: "customer"
     },
+    isVerify:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:false
+    },
     password:{
         type:DataTypes.STRING,
         allowNull:false
     }
     
-})
+},
+{
+    tableName:"User"
+});
 
 
 module.exports = User;

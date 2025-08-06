@@ -15,9 +15,4 @@ const sequelize = new Sequelize(
 )
 
 
-// Database Connection
-sequelize.sync({ alter: true })
-  .then(() => console.log("✅ Database synced"))
-  .catch((err) => console.error("❌ Database connection failed:", err));
-
 module.exports = sequelize

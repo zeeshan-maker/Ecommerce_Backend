@@ -3,7 +3,6 @@ require('dotenv').config();
 const cors = require("cors");
 const sequelize = require("./config/db")
 
-
 const app = express();
 const PORT = process.env.PORT || 5000
 
@@ -18,6 +17,11 @@ app.use("/api/v1/auth",require("./routes/authRoutes"))
 app.get("/",(req, res)=>{
      return res.json({message:"Welcome To E-Commerce Application."})
 });
+
+// Database Connection
+sequelize.sync({ alter: true })
+  .then(() => console.log("✅ Database synced"))
+  .catch((err) => console.error("❌ Database connection failed:", err));
 
 
 sequelize.sync({force:false}).then(()=>{
