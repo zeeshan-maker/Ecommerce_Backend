@@ -12,13 +12,7 @@ const Category = sequelize.define("Category",{
         allowNull:false,
         unique:true
     },
-    slug: { 
-        type: DataTypes.STRING,
-         unique: true
-    },
-    description: { 
-        type: DataTypes.TEXT 
-    }
+    
 })
 
 module.exports = Category;

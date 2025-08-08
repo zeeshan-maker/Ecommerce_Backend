@@ -3,7 +3,6 @@ const sequelize = require("../config/db");
 // Import all models
 const User = require("./User");
 const Category = require("./Category");
-const Brand = require("./Brand");
 const Product = require("./Product");
 const Cart = require("./Cart");
 const CartItem = require("./CartItem");
@@ -22,10 +21,6 @@ Category.hasMany(Product, { foreignKey: "category_id", onDelete: "CASCADE", onUp
 Product.belongsTo(Category, { foreignKey: "category_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
 
 /* ==========================
-   BRAND ↔ PRODUCT
-========================== */
-Brand.hasMany(Product, { foreignKey: "brand_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-Product.belongsTo(Brand, { foreignKey: "brand_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
 
 /* ==========================
    USER ↔ CART
@@ -115,7 +110,6 @@ module.exports = {
   sequelize,
   User,
   Category,
-  Brand,
   Product,
   Cart,
   CartItem,

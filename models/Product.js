@@ -13,10 +13,6 @@ const Product = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    slug: {
-      type: DataTypes.STRING,
-      unique: true,
-    },
     description: {
       type: DataTypes.TEXT,
     },
@@ -24,16 +20,12 @@ const Product = sequelize.define(
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
-    discount: { 
-        type: DataTypes.DECIMAL(5, 2), 
-        defaultValue: 0.0 
-    },
     stock: { 
         type: DataTypes.INTEGER, 
         defaultValue: 0 
     },
     images: { 
-        type: DataTypes.JSON,
+        type: DataTypes.JSONB,
         allowNull:false
     },
   }
