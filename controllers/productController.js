@@ -41,3 +41,42 @@ exports.createProduct = async (req, res) => {
  }
 
 };
+
+
+exports.getAllProduct = async (req, res )=>{
+  try {
+    const products = await Product.findAll()
+    if(!products){
+      return res.status(404).json({status:404, message:"Products not found"})
+    }
+    return res.status(200).json({status:200, products})
+  } catch (error) {
+    return res.status(500).json({status:500, message:"Server Error"})
+  }
+}
+
+exports.deleteById = async (req, res)=>{
+  const {product_id }=  req.params;
+  try {
+     // 1️⃣ Find product by ID
+    const product = await Product.findByPk(product_id);
+     if (!product) {
+      return res.status(404).json({status:404, message: "Product not found" });
+    }
+     // 2️⃣ Delete images from Cloudinary (if stored in JSONB)
+    if (product.images && Array.isArray(product.images)) {
+      for (let imageUrl of product.images) {
+        // Extract public_id from Cloudinary URL
+        const publicId = imageUrl.split("/").slice(-1)[0].split(".")[0];
+        await cloudinary.uploader.destroy(`products/${publicId}`);
+      }
+
+       // 3️⃣ Delete product from DB
+    await product.destroy();
+    return res.status(200).json({ status:200, message: "Product deleted successfully" });
+
+    }
+  } catch (error) {
+    return res.status(500).json({ status:500, message: "Server error" });
+  }
+}
