@@ -2,12 +2,18 @@ const { User } = require("../models/Index");
 const generateToken = require("../utils/generateToken")
 
 exports.register = async (req, res) => {
-  const { name, email, phone, password } = req.body;
+  const { name, email,phone, password } = req.body;
   try {
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ message: "Email already registered." });
+      return res.status(400).json({ status:400, message: "Email already registered." });
     }
+
+     const existingPhone = await User.findOne({ where: { phone } });
+    if (existingPhone) {
+      return res.status(400).json({ status:400, message: "Phone Number already registered." });
+    }
+
 
     // create new user
     const newUser = await User.create({
@@ -16,6 +22,8 @@ exports.register = async (req, res) => {
       phone,
       password,
     });
+
+
     return res.status(200).json({
       message: "User registered successfully",
       user: {
@@ -26,8 +34,9 @@ exports.register = async (req, res) => {
         role: newUser.role
       },
     });
+
   } catch (error) {
-    return res.status(500).json({ message: "Server Error" });
+    return res.status(500).json({ status:500, message: "Server Error"});
   }
 };
 
@@ -37,11 +46,12 @@ exports.login = async (req, res) =>{
 
   try {
     const user = await User.findOne({where:{email}})
+
     if(!user){
-         if (!user) return res.status(400).json({ message: "Invalid credentials" });
+         if (!user) return res.status(400).json({ message: "User not found" });
     }
      const isMatch = password === user.password
-     if(isMatch){
+     if(!isMatch){
       return res.status(400).json({status:400, message:"Invalid credentials"})
      }
     return res.json({
