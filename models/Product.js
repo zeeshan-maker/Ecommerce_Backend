@@ -20,6 +20,9 @@ const Product = sequelize.define(
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
+    old_price: {
+      type: DataTypes.DECIMAL(10, 2),
+    },
     stock: { 
         type: DataTypes.INTEGER, 
         defaultValue: 0 

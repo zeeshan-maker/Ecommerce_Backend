@@ -4,7 +4,7 @@ const cloudinary = require("../config/cloudinary");
 
 exports.createProduct = async (req, res) => {
  try {
-   const { name, description, price, stock, category_id} = req.body;
+   const { name, description, price,old_price, stock, category_id} = req.body;
   
    // Wrap Cloudinary upload_stream in a Promise
     const uploadToCloudinary = (fileBuffer) => {
@@ -29,6 +29,7 @@ exports.createProduct = async (req, res) => {
       name,
       description,
       price,
+      old_price,
       stock,
       category_id: category_id,
       images:imageUrls
@@ -54,6 +55,23 @@ exports.getAllProduct = async (req, res )=>{
     return res.status(500).json({status:500, message:"Server Error"})
   }
 }
+
+
+exports.getProductById = async (req, res) => {
+  const { product_id } = req.params;
+  try {
+    const product = await Product.findByPk(product_id);
+
+    if (!product) {
+      return res.status(404).json({ status: 404, message: "Product not found" });
+    }
+
+    return res.status(200).json({ status: 200, product });
+  } catch (error) {
+    return res.status(500).json({ status: 500, message: "Server error" });
+  }
+};
+
 
 exports.deleteById = async (req, res)=>{
   const {product_id }=  req.params;
