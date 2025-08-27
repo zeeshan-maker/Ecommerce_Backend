@@ -1,10 +1,10 @@
-const { Product } = require("../models/Index");
+const { Product, Category } = require("../models/Index");
 const cloudinary = require("../config/cloudinary");
 
 
 exports.createProduct = async (req, res) => {
  try {
-   const { name, description, price,old_price, stock, category_id} = req.body;
+   const { name, description, price,old_price,sizes, stock, category_id} = req.body;
   
    // Wrap Cloudinary upload_stream in a Promise
     const uploadToCloudinary = (fileBuffer) => {
@@ -30,15 +30,16 @@ exports.createProduct = async (req, res) => {
       description,
       price,
       old_price,
+      sizes,
       stock,
       category_id: category_id,
       images:imageUrls
     });
 
-    return res.status(201).json({message:"Product Create Successfully."})
+    return res.status(201).json({status:201,message:"Product Create Successfully."})
 
  } catch (error) {
-    return res.status(500).json({message:"server error"})
+    return res.status(500).json({status:500,message:"server error"})
  }
 
 };
@@ -46,7 +47,14 @@ exports.createProduct = async (req, res) => {
 
 exports.getAllProduct = async (req, res )=>{
   try {
-    const products = await Product.findAll()
+    const products = await Product.findAll({
+      include:[
+        {
+          model:Category,
+          attributes:["name"]
+        }
+      ]
+    })
     if(!products){
       return res.status(404).json({status:404, message:"Products not found"})
     }
