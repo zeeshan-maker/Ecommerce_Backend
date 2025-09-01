@@ -4,15 +4,10 @@ const sequelize = require("../config/db");
 const User = require("./User");
 const Category = require("./Category");
 const Product = require("./Product");
-const Cart = require("./Cart");
-const CartItem = require("./CartItem");
 const Order = require("./Order");
 const OrderItem = require("./OrderItem");
 const Payment = require("./Payment");
 const ShippingAddress = require("./Shipping");
-const Review = require("./Review");
-const Wishlist = require("./Wishlist");
-const Notification = require("./Notification");
 
 /* ==========================
    CATEGORY ↔ PRODUCT
@@ -22,23 +17,7 @@ Product.belongsTo(Category, { foreignKey: "category_id", onDelete: "CASCADE", on
 
 /* ==========================
 
-/* ==========================
-   USER ↔ CART
-========================== */
-User.hasOne(Cart, { foreignKey: "user_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-Cart.belongsTo(User, { foreignKey: "user_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
 
-/* ==========================
-   CART ↔ CARTITEM
-========================== */
-Cart.hasMany(CartItem, { foreignKey: "cart_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-CartItem.belongsTo(Cart, { foreignKey: "cart_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-
-/* ==========================
-   PRODUCT ↔ CARTITEM
-========================== */
-Product.hasMany(CartItem, { foreignKey: "product_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-CartItem.belongsTo(Product, { foreignKey: "product_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
 
 /* ==========================
    USER ↔ ORDER
@@ -75,49 +54,15 @@ ShippingAddress.belongsTo(User, { foreignKey: "user_id", onDelete: "CASCADE", on
 ========================== */
 Order.belongsTo(ShippingAddress, { foreignKey: "shippingAddress_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
 
-/* ==========================
-   USER ↔ REVIEW
-========================== */
-User.hasMany(Review, { foreignKey: "user_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-Review.belongsTo(User, { foreignKey: "user_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-
-/* ==========================
-   PRODUCT ↔ REVIEW
-========================== */
-Product.hasMany(Review, { foreignKey: "product_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-Review.belongsTo(Product, { foreignKey: "product_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-
-/* ==========================
-   USER ↔ WISHLIST
-========================== */
-User.hasMany(Wishlist, { foreignKey: "user_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-Wishlist.belongsTo(User, { foreignKey: "user_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-
-/* ==========================
-   PRODUCT ↔ WISHLIST
-========================== */
-Product.hasMany(Wishlist, { foreignKey: "product_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-Wishlist.belongsTo(Product, { foreignKey: "product_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-
-
-/* ==========================
-   USER ↔ NOTIFICATION
-========================== */
-User.hasMany(Notification, { foreignKey: "user_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
-Notification.belongsTo(User, { foreignKey: "user_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
 
 module.exports = {
   sequelize,
   User,
   Category,
   Product,
-  Cart,
-  CartItem,
   Order,
   OrderItem,
   Payment,
   ShippingAddress,
-  Review,
-  Wishlist,
-  Notification
+  
 };
