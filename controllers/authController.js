@@ -12,8 +12,8 @@ exports.register = async (req, res) => {
     });
     if (existingUser) {
       if (existingUser.email === email) {
-        return res.status(409).json({
-          status: 409,
+        return res.status(400).json({
+          status: 400,
           message: "Email already registered.",
         });
       }
@@ -93,13 +93,14 @@ exports.login = async (req, res) => {
         `Please verify your account.`,
         `<p>Click to verify: <a href="${verifyLink}">${verifyLink}</a></p>`
       );
-      return res.status(201).json({
-        status: 201,
+      return res.status(400).json({
+        status: 400,
         message: "Please Check your email to verify your account.",
       });
     }
 
-    return res.json({
+    return res.status(200).json({
+      status:200,
       message: "Login successful",
       token: generateToken(user.user_id),
       user: {
@@ -136,6 +137,52 @@ exports.verifyUser = async (req, res) => {
   }
 };
 
+
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ where: { email: email } });
+    if (!user) return res.status(404).json({ status:404, message: "User not found" });
+
+    const token = generateToken(user.user_id)
+    res.status(200).json({ status: 200, message: "Reset link sent to email" });
+    const resetLink = `http://localhost:3000/reset-password/${token}`;
+    await sendEmail(
+      email,
+      "Reset Your Password",
+      `We received a request to reset your password. Click the button below to set a new password`,
+      `<p style="text-align: center;">
+                 <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 4px;">Reset Password</a>
+
+            </p>
+            <p style="text-align: center; margin-top: 20px;">Or copy this link: <br/> <a href="${resetLink}">${resetLink}</a></p>`
+    );
+
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      error: error.message,
+    });
+  }
+};
+
+
 exports.resetPassword = async (req, res) => {
-  res.json({ message: "Forget Password." });
+  const { token } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findByPk(decoded.user_id);
+    if (!user)
+    return res.status(400).json({ message: "Invalid or expired token" });
+    user.password = newPassword;
+    await user.save();
+    return res
+      .status(200)
+      .json({ status: 200, message: "Password updated successfully" });
+  } catch (error) {
+    return res.status(500).json({ status: 500, error: error.message });
+  }
 };
