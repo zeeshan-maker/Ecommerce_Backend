@@ -7,17 +7,15 @@ const ShippingAddress = sequelize.define("ShippingAddress", {
     defaultValue: DataTypes.UUIDV4, 
     primaryKey: true 
 },
-  fullName: { 
-    type: DataTypes.STRING, 
-    allowNull: false 
-},
-  addressLine1: { 
-    type: DataTypes.STRING, 
-    allowNull: false 
-},
-  addressLine2: {
-     type: DataTypes.STRING 
-    },
+ order_id: {
+    type: DataTypes.UUID,
+    allowNull: false
+  },
+  
+address: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
   city: {
      type: DataTypes.STRING, 
      allowNull: false
@@ -35,7 +33,8 @@ const ShippingAddress = sequelize.define("ShippingAddress", {
      allowNull: false 
     },
   phone: { 
-    type: DataTypes.STRING 
+    type: DataTypes.STRING,
+    allowNull:false,
 }
 });
 
