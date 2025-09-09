@@ -35,6 +35,10 @@ const Product = sequelize.define(
         type: DataTypes.JSONB,
         allowNull:false
     },
+    bestseller:{
+      type: DataTypes.BOOLEAN,
+      defaultValue:false
+    }
   }
 );
 

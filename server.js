@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/auth",require("./routes/authRoutes"));
 app.use("/api/v1/category",require("./routes/categoryRoutes"));
 app.use("/api/v1/product",require("./routes/productRoutes"));
-app.use("/api/v1/payments",require("./routes/paymentRoutes"));
+app.use("/api/v1/order",require("./routes/orderRoutes"));
 
 app.get("/",(req, res)=>{
      return res.json({message:"Welcome To E-Commerce Application."})

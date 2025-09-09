@@ -68,7 +68,14 @@ exports.getAllProduct = async (req, res )=>{
 exports.getProductById = async (req, res) => {
   const { product_id } = req.params;
   try {
-    const product = await Product.findByPk(product_id);
+    const product = await Product.findByPk(product_id,{
+      include:[
+         {
+          model: Category,
+          attributes: ["name"],
+        },
+      ]
+    });
 
     if (!product) {
       return res.status(404).json({ status: 404, message: "Product not found" });

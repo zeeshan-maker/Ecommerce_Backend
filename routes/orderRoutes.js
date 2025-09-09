@@ -4,8 +4,8 @@ const {verifyToken, isAdmin} = require("../middleware/auth")
 const router = express.Router();
 
 // admin features
-router.get("/",verifyToken, isAdmin, allOrders);
-router.post("/", verifyToken, isAdmin, updateStatus);
+router.get("/list",verifyToken, isAdmin, allOrders);
+router.post("/update-status", verifyToken, isAdmin, updateStatus);
 
 // Payment Features
 router.post("/place", verifyToken, placeOrder);
