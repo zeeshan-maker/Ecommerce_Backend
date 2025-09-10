@@ -3,11 +3,8 @@ const {
   OrderItem,
   Product,
   ShippingAddress,
-  Payment,
 } = require("../models/Index");
 const stripe = require("../config/stripe.js");
-const currency = "inr";
-const deliveryCharge = 10;
 
 // Placing order using COD Method
 exports.placeOrder = async (req, res) => {
@@ -15,15 +12,31 @@ exports.placeOrder = async (req, res) => {
     const { items, amount, address } = req.body;
     const user_id = req.user.user_id;
 
-    const orderData = {
-      user_id,
-      items,
-      amount,
-      address,
-      paymentMethod: "COD",
-      payment: false,
-      date: Date.now(),
+       // Create Order
+    const order = await Order.create({ user_id: user_id, totalAmount: amount });
+
+    // Create OrderItems
+    for (let item of items) {
+      const product = await Product.findByPk(item.product_id);
+      await OrderItem.create({
+        order_id: order.order_id,
+        product_id: item.product_id,
+        quantity: item.quantity,
+        price: product.price,
+      });
+    }
+
+    // Create Order address
+    let shippingData = {
+      order_id: order.order_id,
+      address: address.address,
+      city: address.city,
+      state: address.state,
+      postalCode: address.postalCode,
+      country: address.country,
+      phone: address.phone,
     };
+    await ShippingAddress.create(shippingData);
 
     // await Order.create(orderData);
     return res.status(200).json({ status: 200, message: "Order Placed." });
@@ -66,7 +79,7 @@ exports.placeOrderStripe = async (req, res) => {
 
     const line_items = items.map((item) => ({
       price_data: {
-        currency: currency,
+        currency: "inr",
         product_data: {
           name: item.name,
         },
