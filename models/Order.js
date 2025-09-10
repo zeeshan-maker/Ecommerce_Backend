@@ -7,13 +7,15 @@ const Order = sequelize.define("Order", {
     defaultValue: DataTypes.UUIDV4,
      primaryKey: true 
     },
+  
   totalAmount: { 
-    type: DataTypes.DECIMAL(10, 2),
+    type: DataTypes.FLOAT,
      allowNull: false 
     },
   paymentStatus: {
      type: DataTypes.ENUM("pending", "paid", "failed"), 
-     defaultValue: "pending" },
+     defaultValue: "pending" 
+    },
   orderStatus: { 
     type: DataTypes.ENUM("pending", "processing", "shipped", "delivered", "cancelled"), 
     defaultValue: "pending" 

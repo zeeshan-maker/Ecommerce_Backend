@@ -6,13 +6,13 @@ const OrderItem = sequelize.define("OrderItem", {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
-  },
+  },  
   quantity: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
   price: {
-    type: DataTypes.DECIMAL(10, 2),
+    type: DataTypes.FLOAT,
     allowNull: false,
   },
 });
