@@ -8,7 +8,7 @@ const Payment = sequelize.define("Payment", {
     primaryKey: true,
   },
   paymentMethod: {
-    type: DataTypes.ENUM("stripe", "paypal", "cod"),
+    type: DataTypes.ENUM("stripe", "razorpay", "cod"),
     allowNull: false,
   },
   transactionId: {
