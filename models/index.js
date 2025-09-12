@@ -49,10 +49,6 @@ Payment.belongsTo(Order, { foreignKey: "order_id", onDelete: "CASCADE", onUpdate
 User.hasMany(ShippingAddress, { foreignKey: "user_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
 ShippingAddress.belongsTo(User, { foreignKey: "user_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
 
-/* ==========================
-   ORDER ↔ SHIPPINGADDRESS
-========================== */
-Order.belongsTo(ShippingAddress, { foreignKey: "shippingAddress_id", onDelete: "CASCADE", onUpdate: "CASCADE" });
 
 
 module.exports = {

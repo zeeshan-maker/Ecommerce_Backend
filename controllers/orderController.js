@@ -3,6 +3,7 @@ const {
   OrderItem,
   Product,
   ShippingAddress,
+  Payment,
 } = require("../models/Index");
 const stripe = require("../config/stripe.js");
 
@@ -11,6 +12,7 @@ exports.placeOrder = async (req, res) => {
   try {
     const { items, amount, address } = req.body;
     const user_id = req.user.user_id;
+  
 
        // Create Order
     const order = await Order.create({ user_id: user_id, totalAmount: amount });
@@ -22,6 +24,7 @@ exports.placeOrder = async (req, res) => {
         order_id: order.order_id,
         product_id: item.product_id,
         quantity: item.quantity,
+        size: item.size,
         price: product.price,
       });
     }
@@ -37,6 +40,14 @@ exports.placeOrder = async (req, res) => {
       phone: address.phone,
     };
     await ShippingAddress.create(shippingData);
+
+    // Create Pyament 
+    await Payment.create({
+      order_id:order.order_id,
+      paymentMethod:"cod",
+      amount:amount,
+      paymentStatus:"pending"
+    })
 
     // await Order.create(orderData);
     return res.status(200).json({ status: 200, message: "Order Placed." });
@@ -113,9 +124,25 @@ exports.placeOrderRazorpay = async (req, res) => {
 
 // All Orders data for Admin
 exports.allOrders = async (req, res) => {
-  try {
-    const orders = await Order.findAll();
-    return res.status(200).json({ status: 200, orders: orders });
+   try {
+    const orders = await Order.findAll({
+      include: [
+        {
+        model: OrderItem,
+        include: [
+             {
+              model: Product,
+            },
+          ],
+       },
+       {
+        model:Payment
+       }
+      
+      ],
+
+    });
+    return res.status(200).json({ status: 200, orders });
   } catch (error) {
     return res.status(500).json({ status: 500, error: error.message });
   }
@@ -127,7 +154,21 @@ exports.userOrders = async (req, res) => {
     const user_id = req.user.user_id;
     const orders = await Order.findAll({
       where: { user_id },
-      include: [{ model: OrderItem }],
+      include: [
+        {
+        model: OrderItem,
+        include: [
+             {
+              model: Product,
+            },
+          ],
+       },
+       {
+        model:Payment
+       }
+      
+      ],
+
     });
     return res.status(200).json({ status: 200, orders });
   } catch (error) {

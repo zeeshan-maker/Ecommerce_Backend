@@ -11,17 +11,15 @@ const Payment = sequelize.define("Payment", {
     type: DataTypes.ENUM("stripe", "razorpay", "cod"),
     allowNull: false,
   },
-  transactionId: {
-    type: DataTypes.STRING,
-  },
   amount: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
-  status: {
-    type: DataTypes.ENUM("pending", "completed", "failed"),
-    defaultValue: "pending",
-  },
+   paymentStatus: {
+       type: DataTypes.ENUM("pending", "paid", "failed"), 
+       defaultValue: "pending" 
+      },
+
 });
 
 module.exports = Payment;
