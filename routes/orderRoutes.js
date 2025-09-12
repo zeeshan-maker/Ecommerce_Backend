@@ -1,5 +1,5 @@
 const express = require('express');
-const  { placeOrder, placeOrderStripe, placeOrderRazorpay, allOrders,updateStatus, userOrders} = require("../controllers/orderController");
+const  { placeOrder, placeOrderStripe, placeOrderRazorpay, allOrders,updateStatus, userOrders,verifyStripe} = require("../controllers/orderController");
 const {verifyToken, isAdmin} = require("../middleware/auth")
 const router = express.Router();
 
@@ -15,6 +15,9 @@ router.post("/razorpay", verifyToken, placeOrderRazorpay);
 
 // user feature
 router.get("/user-order",verifyToken, userOrders)
+
+// verify payment
+router.post("/verify-stripe", verifyToken, verifyStripe)
 
 
 module.exports = router;

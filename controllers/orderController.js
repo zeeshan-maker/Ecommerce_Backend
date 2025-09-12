@@ -72,6 +72,7 @@ exports.placeOrderStripe = async (req, res) => {
         order_id: order.order_id,
         product_id: item.product_id,
         quantity: item.quantity,
+        size: item.size,
         price: product.price,
       });
     }
@@ -88,6 +89,15 @@ exports.placeOrderStripe = async (req, res) => {
     };
     await ShippingAddress.create(shippingData);
 
+
+    // Create Pyament 
+    await Payment.create({
+      order_id:order.order_id,
+      paymentMethod:"stripe",
+      amount:amount,
+      paymentStatus:"pending"
+    })
+
     const line_items = items.map((item) => ({
       price_data: {
         currency: "inr",
@@ -101,8 +111,8 @@ exports.placeOrderStripe = async (req, res) => {
     }));
 
     const session = await stripe.checkout.sessions.create({
-      success_url: "http://localhost:3000/success",
-      cancel_url: "http://localhost:3000/cancel",
+      success_url: `http://localhost:3000/verify?success=true&order_id=${order.order_id}`,
+      cancel_url: `http://localhost:3000/verify?success=false&order_id=${order.order_id}`,
       line_items,
       mode: "payment",
     });
@@ -114,6 +124,34 @@ exports.placeOrderStripe = async (req, res) => {
     return res.status(500).json({ status: 500, error: error.message });
   }
 };
+
+
+// Verify Stripe
+exports.verifyStripe = async (req, res)=>{
+  const { order_id, success} = req.body;
+  try {
+    if(success === 'true'){
+       // Find payment record
+       const payment = await Payment.findOne({ where: { order_id } });
+        if (!payment) {
+           return res.status(404).json({ status: 404, message: "Payment not found" });
+         }
+         payment.paymentStatus = 'paid'
+         await payment.save();
+        return res.status(200).json({ status: 200, success: true, message: "Payment updated"});
+    }
+    else{
+        const order = await Order.findByPk(order_id);
+        if(!order){
+          return res.status(404).json({ status: 404, success: false, message: "Order not found" });
+        }
+         await order.destroy();
+        return res.status(200).json({ status: 200,success: false, message: "Order deleted successfully" });
+    }
+  } catch (error) {
+     return res.status(500).json({ status: 500, error: error.message });
+  }
+}
 
 // Placing Orders using Razorepay Method
 exports.placeOrderRazorpay = async (req, res) => {
