@@ -23,7 +23,8 @@ const User = sequelize.define("User",{
         allowNull:false
     },
     profileImage: { 
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue:"https://res.cloudinary.com/dxqlbgesc/image/upload/v1757730845/profile_nmlvfd.png"
      },
     role:{
         type:DataTypes.ENUM("customer","admin","seller"),
