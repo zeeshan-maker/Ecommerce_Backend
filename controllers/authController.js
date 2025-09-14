@@ -3,6 +3,7 @@ const generateToken = require("../utils/generateToken");
 const { Op } = require("sequelize");
 const { sendEmail } = require("../utils/sendEmail");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 exports.register = async (req, res) => {
   const { name, email, phone, password } = req.body;
@@ -49,7 +50,7 @@ exports.register = async (req, res) => {
       }
     );
 
-    const verifyLink = `http://localhost:4000/api/v1/auth/verify-user/${token}`;
+    const verifyLink = `${process.env.SERVER_URL}/api/v1/auth/verify-user/${token}`;
     await sendEmail(
       email,
       "Use This Link to Activate Your Account",
@@ -86,7 +87,7 @@ exports.login = async (req, res) => {
           expiresIn: "1d",
         }
       );
-      const verifyLink = `http://localhost:4000/api/v1/auth/verify-user/${token}`;
+      const verifyLink = `${process.env.SERVER_URL}/api/v1/auth/verify-user/${token}`;
       await sendEmail(
         email,
         "Use This Link to Activate Your Account",
@@ -147,7 +148,7 @@ exports.forgotPassword = async (req, res) => {
 
     const token = generateToken(user.user_id)
     res.status(200).json({ status: 200, message: "Reset link sent to email" });
-    const resetLink = `http://localhost:3000/reset-password/${token}`;
+    const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
     await sendEmail(
       email,
       "Reset Your Password",
