@@ -1,6 +1,6 @@
 // middleware/authMiddleware.js
 const jwt = require("jsonwebtoken");
-const { User } = require("../models/Index");
+const { User } = require("../models/index");
 
 const verifyToken = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
