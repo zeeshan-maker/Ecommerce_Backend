@@ -1,4 +1,4 @@
-const { Product, Category } = require("../models/Index");
+const { Product, Category } = require("../models/index.js");
 const cloudinary = require("../config/cloudinary");
 
 

@@ -1,4 +1,4 @@
-const { User } = require("../models/Index");
+const { User } = require("../models/index.js");
 const generateToken = require("../utils/generateToken");
 const { Op } = require("sequelize");
 const { sendEmail } = require("../utils/sendEmail");

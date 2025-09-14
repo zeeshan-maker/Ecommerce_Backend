@@ -4,7 +4,7 @@ const {
   Product,
   ShippingAddress,
   Payment,
-} = require("../models/Index");
+} = require("../models/index.js");
 const stripe = require("../config/stripe.js");
 
 // Placing order using COD Method
