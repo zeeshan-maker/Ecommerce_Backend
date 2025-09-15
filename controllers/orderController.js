@@ -112,8 +112,8 @@ exports.placeOrderStripe = async (req, res) => {
     }));
 
     const session = await stripe.checkout.sessions.create({
-      success_url: `${process.env.CLIENT_URL}/verify?success=true&order_id=${order.order_id}`,
-      cancel_url: `${process.env.CLIENT_URL}/verify?success=false&order_id=${order.order_id}`,
+      success_url: `${process.env.CLIENT_URL}/api/v1/order/verify?success=true&order_id=${order.order_id}`,
+      cancel_url: `${process.env.CLIENT_URL}/api/v1/order/verify?success=false&order_id=${order.order_id}`,
       line_items,
       mode: "payment",
     });
