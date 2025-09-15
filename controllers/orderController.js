@@ -6,6 +6,7 @@ const {
   Payment,
 } = require("../models/index.js");
 const stripe = require("../config/stripe.js");
+require("dotenv").config();
 
 // Placing order using COD Method
 exports.placeOrder = async (req, res) => {
@@ -111,8 +112,8 @@ exports.placeOrderStripe = async (req, res) => {
     }));
 
     const session = await stripe.checkout.sessions.create({
-      success_url: `http://localhost:3000/verify?success=true&order_id=${order.order_id}`,
-      cancel_url: `http://localhost:3000/verify?success=false&order_id=${order.order_id}`,
+      success_url: `${process.env.CLIENT_URL}/verify?success=true&order_id=${order.order_id}`,
+      cancel_url: `${process.env.CLIENT_URL}/verify?success=false&order_id=${order.order_id}`,
       line_items,
       mode: "payment",
     });
