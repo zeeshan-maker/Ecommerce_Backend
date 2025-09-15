@@ -112,8 +112,8 @@ exports.placeOrderStripe = async (req, res) => {
     }));
 
     const session = await stripe.checkout.sessions.create({
-      success_url: `${process.env.CLIENT_URL}/api/v1/order/verify?success=true&order_id=${order.order_id}`,
-      cancel_url: `${process.env.CLIENT_URL}/api/v1/order/verify?success=false&order_id=${order.order_id}`,
+      success_url: `${process.env.CLIENT_URL}/verify?success=true&order_id=${order.order_id}`,
+      cancel_url: `${process.env.CLIENT_URL}/verify?success=false&order_id=${order.order_id}`,
       line_items,
       mode: "payment",
     });
@@ -187,6 +187,7 @@ exports.allOrders = async (req, res) => {
   }
 };
 
+
 // User Order Data For  Frontend
 exports.userOrders = async (req, res) => {
   try {
@@ -214,6 +215,17 @@ exports.userOrders = async (req, res) => {
     return res.status(500).json({ status: 500, error: error.message });
   }
 };
+
+exports.trackOrder = async (req, res)=>{
+   try {
+    const { order_id } = req.params;
+    const order = await Order.findOne({where: { order_id }});
+    return res.status(200).json({ status: 200, order });
+  } catch (error) {
+    return res.status(500).json({ status: 500, error: error.message });
+  }
+}
+
 
 // update order status from Admin panel
 exports.updateStatus = async (req, res) => {};
