@@ -138,6 +138,14 @@ exports.verifyUser = async (req, res) => {
   }
 };
 
+exports.updateProfileImage = async (req, res)=>{
+  try {
+       const user_id = req.user.user_id;
+       res.status(200).json({ status: 200, message:"Profile image updated!" });
+  } catch (error) {
+    return res.status(500).json({ status: 500, error: error.message});
+  }
+}
 
 
 exports.forgotPassword = async (req, res) => {

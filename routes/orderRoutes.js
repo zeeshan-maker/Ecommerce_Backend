@@ -9,7 +9,7 @@ const router = express.Router();
 
 // admin features
 router.get("/list",verifyToken, isAdmin, allOrders);
-router.post("/update-status", verifyToken, isAdmin, updateStatus);
+router.put("/update-status", verifyToken, isAdmin, updateStatus);
 
 // Payment Features
 router.post("/place", verifyToken, placeOrder);

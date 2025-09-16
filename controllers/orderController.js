@@ -4,6 +4,7 @@ const {
   Product,
   ShippingAddress,
   Payment,
+  User,
 } = require("../models/index.js");
 const stripe = require("../config/stripe.js");
 require("dotenv").config();
@@ -13,9 +14,8 @@ exports.placeOrder = async (req, res) => {
   try {
     const { items, amount, address } = req.body;
     const user_id = req.user.user_id;
-  
 
-       // Create Order
+    // Create Order
     const order = await Order.create({ user_id: user_id, totalAmount: amount });
 
     // Create OrderItems
@@ -42,13 +42,13 @@ exports.placeOrder = async (req, res) => {
     };
     await ShippingAddress.create(shippingData);
 
-    // Create Pyament 
+    // Create Pyament
     await Payment.create({
-      order_id:order.order_id,
-      paymentMethod:"cod",
-      amount:amount,
-      paymentStatus:"pending"
-    })
+      order_id: order.order_id,
+      paymentMethod: "cod",
+      amount: amount,
+      paymentStatus: "pending",
+    });
 
     // await Order.create(orderData);
     return res.status(200).json({ status: 200, message: "Order Placed." });
@@ -90,14 +90,13 @@ exports.placeOrderStripe = async (req, res) => {
     };
     await ShippingAddress.create(shippingData);
 
-
-    // Create Pyament 
+    // Create Pyament
     await Payment.create({
-      order_id:order.order_id,
-      paymentMethod:"stripe",
-      amount:amount,
-      paymentStatus:"pending"
-    })
+      order_id: order.order_id,
+      paymentMethod: "stripe",
+      amount: amount,
+      paymentStatus: "pending",
+    });
 
     const line_items = items.map((item) => ({
       price_data: {
@@ -126,33 +125,43 @@ exports.placeOrderStripe = async (req, res) => {
   }
 };
 
-
 // Verify Stripe
-exports.verifyStripe = async (req, res)=>{
-  const { order_id, success} = req.body;
+exports.verifyStripe = async (req, res) => {
+  const { order_id, success } = req.body;
   try {
-    if(success === 'true'){
-       // Find payment record
-       const payment = await Payment.findOne({ where: { order_id } });
-        if (!payment) {
-           return res.status(404).json({ status: 404, message: "Payment not found" });
-         }
-         payment.paymentStatus = 'paid'
-         await payment.save();
-        return res.status(200).json({ status: 200, success: true, message: "Payment updated"});
-    }
-    else{
-        const order = await Order.findByPk(order_id);
-        if(!order){
-          return res.status(404).json({ status: 404, success: false, message: "Order not found" });
-        }
-         await order.destroy();
-        return res.status(200).json({ status: 200,success: false, message: "Order deleted successfully" });
+    if (success === "true") {
+      // Find payment record
+      const payment = await Payment.findOne({ where: { order_id } });
+      if (!payment) {
+        return res
+          .status(404)
+          .json({ status: 404, message: "Payment not found" });
+      }
+      payment.paymentStatus = "paid";
+      await payment.save();
+      return res
+        .status(200)
+        .json({ status: 200, success: true, message: "Payment updated" });
+    } else {
+      const order = await Order.findByPk(order_id);
+      if (!order) {
+        return res
+          .status(404)
+          .json({ status: 404, success: false, message: "Order not found" });
+      }
+      await order.destroy();
+      return res
+        .status(200)
+        .json({
+          status: 200,
+          success: false,
+          message: "Order deleted successfully",
+        });
     }
   } catch (error) {
-     return res.status(500).json({ status: 500, error: error.message });
+    return res.status(500).json({ status: 500, error: error.message });
   }
-}
+};
 
 // Placing Orders using Razorepay Method
 exports.placeOrderRazorpay = async (req, res) => {
@@ -163,30 +172,27 @@ exports.placeOrderRazorpay = async (req, res) => {
 
 // All Orders data for Admin
 exports.allOrders = async (req, res) => {
-   try {
+  try {
     const orders = await Order.findAll({
       include: [
         {
-        model: OrderItem,
-        include: [
-             {
+          model: OrderItem,
+          include: [
+            {
               model: Product,
             },
           ],
-       },
-       {
-        model:Payment
-       }
-      
+        },
+        {
+          model: Payment,
+        },
       ],
-
     });
     return res.status(200).json({ status: 200, orders });
   } catch (error) {
     return res.status(500).json({ status: 500, error: error.message });
   }
 };
-
 
 // User Order Data For  Frontend
 exports.userOrders = async (req, res) => {
@@ -196,19 +202,17 @@ exports.userOrders = async (req, res) => {
       where: { user_id },
       include: [
         {
-        model: OrderItem,
-        include: [
-             {
+          model: OrderItem,
+          include: [
+            {
               model: Product,
             },
           ],
-       },
-       {
-        model:Payment
-       }
-      
+        },
+        {
+          model: Payment,
+        },
       ],
-
     });
     return res.status(200).json({ status: 200, orders });
   } catch (error) {
@@ -216,16 +220,31 @@ exports.userOrders = async (req, res) => {
   }
 };
 
-exports.trackOrder = async (req, res)=>{
-   try {
+exports.trackOrder = async (req, res) => {
+  try {
     const { order_id } = req.params;
-    const order = await Order.findOne({where: { order_id }});
+    const order = await Order.findOne({ where: { order_id } });
     return res.status(200).json({ status: 200, order });
   } catch (error) {
     return res.status(500).json({ status: 500, error: error.message });
   }
-}
-
+};
 
 // update order status from Admin panel
-exports.updateStatus = async (req, res) => {};
+exports.updateStatus = async (req, res) => {
+  try {
+      const {orderId, newStatus} = req.body;
+      const order= await Order.update(
+      {orderStatus:newStatus},
+      {where:{order_id:orderId}}
+      )
+      if(order.length === 0){
+        return res.status(404).json({ status: 404, message: "Order not found" });
+      }
+     return res.status(200).json({status:200, message:"Order Status Updated!"})
+    
+  } catch (error) {
+    return res.status(500).json({status:500, error:error.message})
+    
+  }
+};
