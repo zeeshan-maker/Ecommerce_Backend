@@ -87,7 +87,7 @@ exports.login = async (req, res) => {
           expiresIn: "1d",
         }
       );
-      const verifyLink = `${process.env.SERVER_URL}/api/v1/auth/verify-user/${token}`;
+      const verifyLink = `${process.env.CLIENT_URL}/verify-user?token=${token}`;
       await sendEmail(
         email,
         "Use This Link to Activate Your Account",
@@ -134,9 +134,10 @@ exports.verifyUser = async (req, res) => {
       .status(200)
       .json({ status: 200, message: "Account verified successfully!" });
   } catch (error) {
-    res.status(400).json({ status: 400, message: "Invalid or expired token" });
+    res.status(500).json({ status: 500, error: error.message });
   }
 };
+
 
 exports.updateProfileImage = async (req, res)=>{
   try {
