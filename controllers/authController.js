@@ -50,7 +50,7 @@ exports.register = async (req, res) => {
       }
     );
 
-    const verifyLink = `${process.env.SERVER_URL}/api/v1/auth/verify-user/${token}`;
+    const verifyLink = `https://ecommerce-backend-3lxx.onrender.com/api/v1/auth/verify-user/${token}`;
     await sendEmail(
       email,
       "Use This Link to Activate Your Account",
@@ -87,7 +87,7 @@ exports.login = async (req, res) => {
           expiresIn: "1d",
         }
       );
-      const verifyLink = `${process.env.SERVER_URL}/api/v1/auth/verify-user/${token}`;
+      const verifyLink = `https://ecommerce-backend-3lxx.onrender.com/api/v1/auth/verify-user/${token}`;
       await sendEmail(
         email,
         "Use This Link to Activate Your Account",
@@ -156,7 +156,7 @@ exports.forgotPassword = async (req, res) => {
 
     const token = generateToken(user.user_id)
     res.status(200).json({ status: 200, message: "Reset link sent to email" });
-    const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
+    const resetLink = `https://ecommerce-frontend-pi6r.onrender.com/reset-password/${token}`;
     await sendEmail(
       email,
       "Reset Your Password",
